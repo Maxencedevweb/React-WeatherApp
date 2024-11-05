@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import cloudsIcon from '../assets/img/clouds.png';
 import fogIcon from '../assets/img/fog.png';
 import heavyRainIcon from '../assets/img/heavy-rain.png';
@@ -8,6 +9,7 @@ import heavySnowIcon from '../assets/img/heavy-snow.png';
 import sunRainIcon from '../assets/img/sun-rain.png';
 import sunshineIcon from '../assets/img/sunshine.png';
 import thunderStormIcon from '../assets/img/thunderstorm.png';
+
 const WeatherCode = (props) => {
   const { code } = props;
   const weatherIcons = {
@@ -35,6 +37,10 @@ const WeatherCode = (props) => {
       alt='Logo partiellement nuageux'
     />
   );
+};
+
+WeatherCode.propTypes = {
+  code: PropTypes.number.isRequired,
 };
 
 export default WeatherCode;

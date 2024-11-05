@@ -17,7 +17,7 @@ const App = () => {
         </header>
         <p className='date'>10/20/2021</p>
         <article className='today'>
-          <WeatherCode code={2} />
+          <WeatherCode code={0} />
           <TemperatureDisplay min={15} max={20} avg={18} />
         </article>
         <section className='hidden'>

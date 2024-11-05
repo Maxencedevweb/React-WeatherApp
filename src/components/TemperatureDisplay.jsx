@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const TemperatureDisplay = (props) => {
   const { min, max, avg } = props;
@@ -11,6 +12,12 @@ const TemperatureDisplay = (props) => {
       </div>
     </div>
   );
+};
+
+TemperatureDisplay.propTypes = {
+  min: PropTypes.number.isRequired,
+  max: PropTypes.number.isRequired,
+  avg: PropTypes.number.isRequired,
 };
 
 export default TemperatureDisplay;
