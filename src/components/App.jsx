@@ -27,6 +27,12 @@ const App = () => {
     console.log(meteoData);
   };
 
+  const getTempAvg = (data) => {
+    const tempSum = data.slice(0, 24).reduce((acc, curr) => acc + curr, 0);
+    const tempAvg = Math.round(tempSum / 24);
+    return tempAvg;
+  };
+
   const timestampToHours = (timestamp) => {
     const date = new Date(timestamp);
     const hours = String(date.getHours()).padStart(2, '0');
@@ -49,8 +55,20 @@ const App = () => {
         </header>
         <p className='date'>10/20/2021</p>
         <article className='today'>
-          <WeatherCode code={56} />
-          <TemperatureDisplay min={15} max={20} avg={18} />
+          {meteoData ? (
+            <WeatherCode code={parseInt(meteoData.daily.weathercode)} />
+          ) : (
+            'Pas de données'
+          )}
+          {meteoData ? (
+            <TemperatureDisplay
+              min={parseInt(meteoData.daily.temperature_2m_min)}
+              max={parseInt(meteoData.daily.temperature_2m_max)}
+              avg={getTempAvg(meteoData.hourly.temperature_2m)}
+            />
+          ) : (
+            'Pas de données'
+          )}
         </article>
         <section className='hidden'>
           <nav className='tabs'>
@@ -97,7 +115,11 @@ const App = () => {
           </ul>
         </section>
         <footer className='weather-container-footer'>
-          <p>Mis à jour à {timestampToHours(meteoData.timestamp)}</p>
+          <p>
+            {meteoData
+              ? 'Mis à jour à ' + timestampToHours(meteoData.timestamp)
+              : 'Pas de données'}
+          </p>
         </footer>
       </div>
     </main>
