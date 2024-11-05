@@ -28,7 +28,7 @@ const App = () => {
   };
   useEffect(() => {
     getMeteoData();
-    const timer = setInterval(getMeteoData, 10000);
+    const timer = setInterval(getMeteoData, 100000);
     return () => clearInterval(timer);
   }, []);
 

@@ -1,18 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const TemperatureDisplay = (props) => {
-  const { min, max, avg } = props;
-  return (
-    <div className='temperature-display'>
-      <p className='temperature-display-avg'>{avg}</p>
-      <div className='temperature-display-row'>
-        <p>{max}</p>
-        <p className='temperature-display-row-item--min'>{min}</p>
+class TemperatureDisplay extends React.Component {
+  render() {
+    return (
+      <div className='temperature-display'>
+        <p className='temperature-display-avg'>{this.props.avg}</p>
+        <div className='temperature-display-row'>
+          <p>{this.props.max}</p>
+          <p className='temperature-display-row-item--min'>{this.props.min}</p>
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 TemperatureDisplay.propTypes = {
   min: PropTypes.number.isRequired,
