@@ -3,15 +3,36 @@ import { useState } from 'react';
 import TemperatureDisplay from './TemperatureDisplay';
 import WeatherCode from './WeatherCode';
 
+const baseUrl = 'https://api.open-meteo.com/v1/forecast';
+const timezone = 'Europe/London';
+const dailyVars = ['weathercode', 'temperature_2m_max', 'temperature_2m_min'];
+
+const hourlyVars = ['temperature_2m', 'weathercode'];
+
+// Les coordonnées de La Rochelle ;-)
+const latitude = 46.1592;
+const longitude = -1.171;
+
 const App = () => {
   const [meteoData, setMeteoData] = useState(null);
 
   const getMeteoData = () => {
     fetch(
-      'https://api.open-meteo.com/v1/forecast?latitude=46.1631&longitude=-1.1522&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Europe%2FLondon'
+      `${baseUrl}?latitude=${latitude}&longitude=${longitude}&hourly=${hourlyVars.join(
+        ','
+      )}&daily=${dailyVars.join(',')}&timezone=${timezone}`
     )
       .then((res) => res.json())
-      .then((data) => console.log(data) + setMeteoData(data));
+      .then((data) => setMeteoData({ ...data, timestamp: Date.now() }));
+    console.log(meteoData);
+  };
+
+  const timestampToHours = (timestamp) => {
+    const date = new Date(timestamp);
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
   };
 
   return (
@@ -76,7 +97,7 @@ const App = () => {
           </ul>
         </section>
         <footer className='weather-container-footer'>
-          <p>Mis à jour à 10:14:21</p>
+          <p>Mis à jour à {timestampToHours(meteoData.timestamp)}</p>
         </footer>
       </div>
     </main>
