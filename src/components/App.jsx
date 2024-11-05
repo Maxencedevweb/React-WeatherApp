@@ -1,14 +1,25 @@
 import React from 'react';
+import { useState } from 'react';
 import TemperatureDisplay from './TemperatureDisplay';
 import WeatherCode from './WeatherCode';
 
 const App = () => {
+  const [meteoData, setMeteoData] = useState(null);
+
+  const getMeteoData = () => {
+    fetch(
+      'https://api.open-meteo.com/v1/forecast?latitude=46.1631&longitude=-1.1522&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Europe%2FLondon'
+    )
+      .then((res) => res.json())
+      .then((data) => console.log(data) + setMeteoData(data));
+  };
+
   return (
     <main className='weather-container'>
       <div className='weather-container-content'>
         <header className='weather-container-header'>
           <p className='location'>La Rochelle</p>
-          <button className='refresh-button'>
+          <button className='refresh-button' onClick={getMeteoData}>
             <img
               src='https://lpmiaw-react.napkid.dev/img/weather/refresh.png'
               alt='Refresh'
