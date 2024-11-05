@@ -27,7 +27,11 @@ const WeatherCode = (props) => {
   };
 
   const determineIcon = (code) => {
-    return weatherIcons ? weatherIcons[code] : sunshineIcon;
+    const icon = Object.keys(weatherIcons)
+      .sort((a, b) => b - a)
+      .find((key) => key <= code);
+
+    return weatherIcons[icon];
   };
 
   return (
