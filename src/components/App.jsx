@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import TemperatureDisplay from './TemperatureDisplay';
 import WeatherCode from './WeatherCode';
@@ -26,6 +26,11 @@ const App = () => {
       .then((data) => setMeteoData({ ...data, timestamp: Date.now() }));
     console.log(meteoData);
   };
+  useEffect(() => {
+    getMeteoData();
+    const timer = setInterval(getMeteoData, 10000);
+    return () => clearInterval(timer);
+  }, []);
 
   const getTempAvg = (data) => {
     const tempSum = data.slice(0, 24).reduce((acc, curr) => acc + curr, 0);
