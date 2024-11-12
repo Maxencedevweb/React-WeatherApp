@@ -30,7 +30,7 @@ const App = () => {
   };
   useEffect(() => {
     getMeteoData();
-    const timer = setInterval(getMeteoData, 1000);
+    const timer = setInterval(getMeteoData, 10000);
     return () => clearInterval(timer);
   }, []);
 
@@ -60,7 +60,12 @@ const App = () => {
             />
           </button>
         </header>
-        <p className='date'>10/20/2021</p>
+
+        {meteoData && (
+          <p className='date'>
+            {meteoData.daily.time[0].split('-').reverse().join('/')}
+          </p>
+        )}
         <article className='today'>
           {meteoData ? (
             <WeatherCode code={parseInt(meteoData.daily.weathercode)} />
