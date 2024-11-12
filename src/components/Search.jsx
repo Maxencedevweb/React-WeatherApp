@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 const Search = (props) => {
@@ -7,7 +7,7 @@ const Search = (props) => {
   const [searchResults, setSearchResults] = useState('');
   const wantedValue = ['centre', 'codeDepartement'];
 
-  const getCityData = () => {
+  const getCityData = useCallback(() => {
     fetch(
       `https://geo.api.gouv.fr/communes?nom=${inputValue}&fields=${wantedValue.join(
         ','
@@ -15,11 +15,11 @@ const Search = (props) => {
     )
       .then((res) => res.json())
       .then((data) => setSearchResults(data));
-  };
+  }, [inputValue]);
 
   useEffect(() => {
-    getCityData();
-  }, [inputValue]);
+    inputValue.length >= 3 && getCityData();
+  }, [getCityData, inputValue.length]);
 
   const handleClickList = (ville) => {
     onSelect(ville);

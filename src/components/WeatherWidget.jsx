@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import TemperatureDisplay from './TemperatureDisplay';
 import WeatherCode from './WeatherCode';
 import ForecastItem from './ForecastItem';
@@ -18,7 +17,7 @@ const WeatherWidget = (props) => {
   const [meteoData, setMeteoData] = useState(null);
   const [tabActive, setTabActive] = useState('day');
 
-  const getMeteoData = () => {
+  const getMeteoData = useCallback(() => {
     fetch(
       `${baseUrl}?latitude=${latitude}&longitude=${longitude}&hourly=${hourlyVars.join(
         ','
@@ -27,12 +26,13 @@ const WeatherWidget = (props) => {
       .then((res) => res.json())
       .then((data) => setMeteoData({ ...data, timestamp: Date.now() }));
     console.log(meteoData);
-  };
+  }, [latitude, longitude]);
+
   useEffect(() => {
     getMeteoData();
     const timer = setInterval(getMeteoData, 100000);
     return () => clearInterval(timer);
-  }, []);
+  }, [getMeteoData]);
 
   const getTempAvg = (data, size) => {
     const tempSum = data.slice(0, size).reduce((acc, curr) => acc + curr, 0);
