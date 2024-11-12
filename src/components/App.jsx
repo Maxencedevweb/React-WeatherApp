@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useState } from 'react';
 import TemperatureDisplay from './TemperatureDisplay';
 import WeatherCode from './WeatherCode';
+import ForecastItem from './ForecastItem';
 
 const baseUrl = 'https://api.open-meteo.com/v1/forecast';
 const timezone = 'Europe/London';
@@ -15,6 +16,7 @@ const longitude = -1.171;
 
 const App = () => {
   const [meteoData, setMeteoData] = useState(null);
+  const [tabActive, setTabActive] = useState('day');
 
   const getMeteoData = () => {
     fetch(
@@ -28,13 +30,13 @@ const App = () => {
   };
   useEffect(() => {
     getMeteoData();
-    const timer = setInterval(getMeteoData, 100000);
+    const timer = setInterval(getMeteoData, 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const getTempAvg = (data) => {
-    const tempSum = data.slice(0, 24).reduce((acc, curr) => acc + curr, 0);
-    const tempAvg = Math.round(tempSum / 24);
+  const getTempAvg = (data, size) => {
+    const tempSum = data.slice(0, size).reduce((acc, curr) => acc + curr, 0);
+    const tempAvg = Math.round(tempSum / size);
     return tempAvg;
   };
 
@@ -69,54 +71,59 @@ const App = () => {
             <TemperatureDisplay
               min={parseInt(meteoData.daily.temperature_2m_min)}
               max={parseInt(meteoData.daily.temperature_2m_max)}
-              avg={getTempAvg(meteoData.hourly.temperature_2m)}
+              avg={getTempAvg(meteoData.hourly.temperature_2m, 24)}
             />
           ) : (
             'Pas de données'
           )}
         </article>
-        <section className='hidden'>
+        <section className=''>
           <nav className='tabs'>
-            <button className='tab tab--active'>Journée</button>
-            <button className='tab'>Semaine</button>
+            <button
+              className={'tab ' + (tabActive === 'day' ? 'tab--active' : '')}
+              onClick={() => setTabActive('day')}
+            >
+              Journée
+            </button>
+            <button
+              className={'tab ' + (tabActive === 'week' ? 'tab--active' : '')}
+              onClick={() => setTabActive('week')}
+            >
+              Semaine
+            </button>
           </nav>
           <ul className='forecast'>
-            <li className='forecast-item'>
-              <p>20/10</p>
-              <img
-                src='https://lpmiaw-react.napkid.dev/img/weather/sunshine.png'
-                alt='sunshine'
-                className='weathercode-img'
-              />
-              <p className='forecast-item-temp'>21</p>
-            </li>
-            <li className='forecast-item'>
-              <p>21/10</p>
-              <img
-                src='https://lpmiaw-react.napkid.dev/img/weather/sunshine.png'
-                alt='sunshine'
-                className='weathercode-img'
-              />
-              <p className='forecast-item-temp'>21</p>
-            </li>
-            <li className='forecast-item'>
-              <p>22/10</p>
-              <img
-                src='https://lpmiaw-react.napkid.dev/img/weather/sunshine.png'
-                alt='sunshine'
-                className='weathercode-img'
-              />
-              <p className='forecast-item-temp'>21</p>
-            </li>
-            <li className='forecast-item'>
-              <p>23/10</p>
-              <img
-                src='https://lpmiaw-react.napkid.dev/img/weather/sunshine.png'
-                alt='sunshine'
-                className='weathercode-img'
-              />
-              <p className='forecast-item-temp'>21</p>
-            </li>
+            {meteoData
+              ? tabActive === 'day'
+                ? new Array(5)
+                    .fill(null)
+                    .map((_, index) => (
+                      <ForecastItem
+                        key={index}
+                        label={4 * index + 6 + 'h'}
+                        code={meteoData.hourly.weathercode[4 * index + 6]}
+                        temperature={
+                          meteoData.hourly.temperature_2m[4 * index + 6]
+                        }
+                      />
+                    ))
+                : new Array(5)
+                    .fill(null)
+                    .map((_, index) => (
+                      <ForecastItem
+                        key={index}
+                        label={meteoData.daily.time[index + 1]
+                          .slice(-5)
+                          .split('-')
+                          .reverse()
+                          .join('/')}
+                        code={meteoData.daily.weathercode[index + 1]}
+                        temperature={
+                          meteoData.daily.temperature_2m_max[index + 1]
+                        }
+                      />
+                    ))
+              : 'Pas de données'}
           </ul>
         </section>
         <footer className='weather-container-footer'>
