@@ -3,50 +3,19 @@ import TemperatureDisplay from './TemperatureDisplay';
 import WeatherCode from './WeatherCode';
 import ForecastItem from './ForecastItem';
 import PropTypes from 'prop-types';
-
-const baseUrl = 'https://api.open-meteo.com/v1/forecast';
-const timezone = 'Europe/London';
-const dailyVars = ['weathercode', 'temperature_2m_max', 'temperature_2m_min'];
-
-const hourlyVars = ['temperature_2m', 'weathercode'];
+import useOpenMeteo from '../hooks/useOpenMeteo';
 
 // Les coordonnées de La Rochelle ;-)
+const getTempAvg = (data, size) => {
+  const tempSum = data.slice(0, size).reduce((acc, curr) => acc + curr, 0);
+  const tempAvg = Math.round(tempSum / size);
+  return tempAvg;
+};
 
 const WeatherWidget = (props) => {
   const { latitude, longitude, cityName } = props;
-  const [meteoData, setMeteoData] = useState(null);
   const [tabActive, setTabActive] = useState('day');
-
-  const getMeteoData = useCallback(() => {
-    fetch(
-      `${baseUrl}?latitude=${latitude}&longitude=${longitude}&hourly=${hourlyVars.join(
-        ','
-      )}&daily=${dailyVars.join(',')}&timezone=${timezone}`
-    )
-      .then((res) => res.json())
-      .then((data) => setMeteoData({ ...data, timestamp: Date.now() }));
-    console.log(meteoData);
-  }, [latitude, longitude]);
-
-  useEffect(() => {
-    getMeteoData();
-    const timer = setInterval(getMeteoData, 100000);
-    return () => clearInterval(timer);
-  }, [getMeteoData]);
-
-  const getTempAvg = (data, size) => {
-    const tempSum = data.slice(0, size).reduce((acc, curr) => acc + curr, 0);
-    const tempAvg = Math.round(tempSum / size);
-    return tempAvg;
-  };
-
-  const timestampToHours = (timestamp) => {
-    const date = new Date(timestamp);
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    return `${hours}:${minutes}:${seconds}`;
-  };
+  const [meteoData, getMeteoData] = useOpenMeteo(latitude, longitude);
 
   return (
     <main className='weather-container'>
@@ -134,7 +103,7 @@ const WeatherWidget = (props) => {
         <footer className='weather-container-footer'>
           <p>
             {meteoData
-              ? 'Mis à jour à ' + timestampToHours(meteoData.timestamp)
+              ? 'Mis à jour à ' + meteoData.timestamp
               : 'Pas de données'}
           </p>
         </footer>

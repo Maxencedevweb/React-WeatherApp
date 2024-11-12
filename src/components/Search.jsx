@@ -48,7 +48,11 @@ const Search = (props) => {
           </svg>
         </button>
       </div>
-      <div className='searchbar-options'>
+      <div
+        className={
+          'searchbar-options ' + (inputValue.length < 3 ? 'hidden' : '')
+        }
+      >
         <ul>
           {searchResults &&
             searchResults.map((ville, index) => (
