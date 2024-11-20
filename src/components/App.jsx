@@ -8,14 +8,13 @@ const App = () => {
     long: dataCity ? dataCity.centre.coordinates[0] : null,
     lat: dataCity ? dataCity.centre.coordinates[1] : null,
   };
-  console.log('long :', coords.long, 'lat :', coords.lat);
 
   return (
     <div className='weather-container'>
       <div className='searchbar-container'>
         <Search
           defaultInputValue='La Rochelle'
-          onSelect={(data) => setDataCity(data) + console.log(data)}
+          onSelect={(data) => setDataCity(data)}
         />
       </div>
       <div className='weather-widget-container'>

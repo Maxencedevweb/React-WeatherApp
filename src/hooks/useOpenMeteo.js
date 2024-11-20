@@ -16,7 +16,6 @@ const useOpenMeteo = (latitude, longitude) => {
     )
       .then((res) => res.json())
       .then((data) => setMeteoData({ ...data, timestamp: timestampToHours(Date.now()) }));
-    console.log(meteoData);
   }, [latitude, longitude]);
 
   useEffect(() => {
